@@ -1,0 +1,54 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y git zip unzip openjdk-17-jdk autoconf libtool pkg-config \
+                              zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake \
+                              libffi-dev libssl-dev
+
+      - name: Install Python packages
+        run: |
+          pip install --upgrade pip
+          pip install buildozer cython
+
+      - name: Build with Buildozer
+        run: |
+          # 自动生成并配置 buildozer.spec（如果不存在或需要修改）
+          if [ ! -f buildozer.spec ]; then
+            buildozer init
+          fi
+          # 确保关键配置正确
+          sed -i 's/title = .*/title = 三公游戏/' buildozer.spec
+          sed -i 's/package.name = .*/package.name = sangong/' buildozer.spec
+          sed -i 's/package.domain = .*/package.domain = org.example/' buildozer.spec
+          sed -i 's/requirements = .*/requirements = python3,kivy==2.1.0,requests,websocket-client/' buildozer.spec
+          # 添加权限（如果没有）
+          grep -q "android.permissions" buildozer.spec || echo "android.permissions = INTERNET" >> buildozer.spec
+          # 确保资源文件扩展名包含
+          sed -i 's/source.include_exts = .*/source.include_exts = py,png,jpg,mp3,ttf/' buildozer.spec
+          buildozer -v android debug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: sangong-apk
+          path: bin/*.apk
