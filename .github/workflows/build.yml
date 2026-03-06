@@ -1,32 +1,3 @@
-name: Build Android APK
-
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.8'
-
-      - name: Install system dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses-dev cmake libffi-dev libssl-dev autoconf-archive libtool-bin gettext autopoint libltdl-dev
-      - name: Install Python packages
-        run: |
-          pip install --upgrade pip
-          pip install buildozer cython
-
       - name: Build with Buildozer
         run: |
           # 自动生成并配置 buildozer.spec（如果不存在或需要修改）
@@ -43,9 +14,3 @@ jobs:
           # 确保资源文件扩展名包含
           sed -i 's/source.include_exts = .*/source.include_exts = py,png,jpg,mp3,ttf/' buildozer.spec
           buildozer -v android debug
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: sangong-apk
-          path: bin/*.apk
