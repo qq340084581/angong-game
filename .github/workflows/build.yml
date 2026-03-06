@@ -37,7 +37,7 @@ jobs:
           sed -i 's/title = .*/title = 三公游戏/' buildozer.spec
           sed -i 's/package.name = .*/package.name = sangong/' buildozer.spec
           sed -i 's/package.domain = .*/package.domain = org.example/' buildozer.spec
-          sed -i 's/requirements = .*/requirements = python3,kivy==2.1.0,requests,websocket-client/' buildozer.spec
+          sed -i 's/requirements = .*/requirements = python3,kivy==2.1.0,requests,websocket-client,pyjnius==2.4.0/' buildozer.spec
           # 添加权限（如果没有）
           grep -q "android.permissions" buildozer.spec || echo "android.permissions = INTERNET" >> buildozer.spec
           # 确保资源文件扩展名包含
