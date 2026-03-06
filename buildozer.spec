@@ -12,7 +12,6 @@ source.include_exts = py,png,jpg,jpeg,kv,atlas,txt,mp3,ttf
 
 # 版本
 version = 0.1
-version.regex = __version__ = ['"](.*)['"]
 version.filename = %(source.dir)s/main.py
 
 # 需求库（重要！）
